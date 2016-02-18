@@ -1,0 +1,6 @@
+---
+
+- name: Sample 2
+  hosts: localhost
+  tasks:
+    - debug: var=inventory_hostname
