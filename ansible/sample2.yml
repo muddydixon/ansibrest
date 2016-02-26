@@ -1,6 +1,13 @@
 ---
 
-- name: Sample 1
+- name: Sample 2 use roles
+  hosts: localhost
+  roles:
+    - {role: sample2/1, tags: fuga}
+    - sample2/2
+  tags: hoge
+
+- name: Sample 2 not use roles
   hosts: localhost
   tasks:
-    - debug: var=inventory_hostname
+    - debug: var=inventory_dir

@@ -1,0 +1,4 @@
+private_ip:
+  localhost: 172.0.0.1
+some:
+  dir: /hoge

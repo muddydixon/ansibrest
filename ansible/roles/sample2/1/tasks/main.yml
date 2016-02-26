@@ -1,0 +1,8 @@
+---
+
+- name: Playbook 2 Role 1 Task 1
+  debug: var=groups
+  tags: piyo
+
+- name: Playbook 2 Role 1 Task 2
+  debug: var=inventory_hostname

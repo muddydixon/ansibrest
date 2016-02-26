@@ -1,0 +1,4 @@
+---
+
+- name: Playbook 2 Role 2 Task 1
+  debug: var=groups
