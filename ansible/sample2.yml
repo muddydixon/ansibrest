@@ -1,5 +1,4 @@
 ---
-
 - name: Sample 2 use roles
   hosts: localhost
   roles:
