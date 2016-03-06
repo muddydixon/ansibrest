@@ -9,14 +9,29 @@ Start REST Server to execute local ansible.
 
 ```
 % npm install ansibrest -g
-% # or
+% ansibrest -h
+
+  Usage: ansibrest [options]
+
+  Options:
+
+    -h, --help                         output usage information
+    -p,--port <PORT>                   PORT
+    --endpoint <ENDPOINT>              ENDPOINT
+    --ansible-path <ANSIBLE_PATH>      ANSIBLE_PATH
+    --inventory-path <INVENTORY_PATH>  INVENTORY_PATH
+```
+
+## Contribute
+
+```
 % npm install -g git://github.com/muddydixon/ansibrest.git
 % cd someproject/
 % ls -l
 ansible/
 % ls ansible
 sample1.yml sample2.yml inventories/
-% ansibrest -d --ansible-path ./ansible --inventory-path ./ansible/inventories
+% ansibrest --ansible-path ./ansible --inventory-path inventories
 % curl -X POST -d "host=samplehost001" -d "startAt=Some Task" "http://localhost:8080/api/playbook/sample1.yml"
 ```
 
