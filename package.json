@@ -1,22 +1,21 @@
 {
   "name": "ansibrest",
+  "author": "muddydixon <muddydixon@gmail.com>",
+  "readmetext": "README.md",
   "version": "1.0.0",
-  "description": "",
+  "description": "RESTify Ansible playbook",
   "main": "index.js",
   "bin": {
     "ansibrest": "./lib/server.js"
   },
-  "directories": {
-    "test": "test"
-  },
+  "license": "Apache License Version 2.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node lib/index.js",
     "server:watch": "node-dev lib/server.js",
     "js:build": "browserify -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] lib/web.js",
     "js:watch": "watchify -d -v -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] lib/web.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["ansible", "rest", "api server"],
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.0",

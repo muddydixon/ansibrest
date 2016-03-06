@@ -1,7 +1,6 @@
 <img src="./public/images/ansibrest.png" width="48"> Ansibrest - Ansible REST Server
 -----
 
-
 ## Abstract
 
 Start REST Server to execute local ansible.
@@ -20,3 +19,17 @@ sample1.yml sample2.yml inventories/
 % ansibrest -d --ansible-path ./ansible --inventory-path ./ansible/inventories
 % curl -X POST -d "host=samplehost001" -d "startAt=Some Task" "http://localhost:8080/api/playbook/sample1.yml"
 ```
+
+## Screens
+
+### Top
+<img src="./public/images/top.png" width="512" />
+
+### Playbook Tasks
+<img src="./public/images/playbook.png" width="512" />
+
+### Config
+<img src="./public/images/config.png" width="512" />
+
+### Execute Playbook
+<img src="./public/images/execute.png" width="512" />
