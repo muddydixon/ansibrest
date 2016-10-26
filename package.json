@@ -10,10 +10,10 @@
   },
   "license": "Apache License Version 2.0",
   "scripts": {
-    "start": "node lib/index.js",
+    "start": "node ansibrest.js",
     "server:watch": "node-dev lib/server.js",
-    "js:build": "browserify -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] lib/web.js",
-    "js:watch": "watchify -d -v -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] lib/web.js"
+    "jsx:build": "browserify -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] jsx/web.js",
+    "jsx:watch": "watchify -d -v -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] jsx/web.js"
   },
   "keywords": ["ansible", "rest", "api server"],
   "license": "ISC",

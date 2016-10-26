@@ -1,5 +1,3 @@
-"use strict";
-
 import React, {Component} from "react";
 import {Router, Route, IndexRoute, hashHistory, PropTypes, Link} from "react-router";
 import {render} from "react-dom";
