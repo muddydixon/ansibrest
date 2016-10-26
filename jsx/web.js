@@ -1,179 +1,22 @@
-"use strict";
-
 import React, {Component} from "react";
 import {Router, Route, IndexRoute, hashHistory, PropTypes, Link} from "react-router";
 import {render} from "react-dom";
 import {Dispatcher} from "flux";
 import {Container, ReduceStore} from "flux/utils";
-import request from "superagent";
-import qs from "querystring";
 
 import Header from "./components/header";
 
-const dispatcher = new Dispatcher();
+import dispatcher from "./dispatcher";
 
-// Store
-class PlaybookStore extends ReduceStore {
-  getInitialState(){
-    return [];
-  }
-  reduce(state, action){
-    switch(action.type){
-    case "FETCH_PLAYBOOKS":
-      return action.playbooks;
-    case "FETCH_PLAYBOOK":
-      return state.map((playbook)=>{
-        if(playbook.name === action.playbook.name){
-          playbook.plays = action.playbook.plays || [];
-          return playbook;
-        }
-        return playbook;
-      });
-    case "PLAY_PLAYBOOK":
-      return state.map((playbook)=>{
-        if(playbook !== action.playbook) return playbook;
-        if(!playbook.results) playbook.results = [];
-        playbook.results.push(action.result);
-        return playbook;
-      });
-    default:
-      return state;
-    }
-  }
-};
-const playbookStore = new PlaybookStore(dispatcher);
+import PlaybookStore from "./stores/playbook-store";
+import InventoryStore from "./stores/inventory-store";
+import ConfigStore from "./stores/config-store";
+import ErrorStore from "./stores/error-store";
 
-class InventoryStore extends ReduceStore {
-  getInitialState(){
-    return [];
-  }
-  reduce(state, action){
-    switch(action.type){
-    case "FETCH_INVENTORIES":
-      return action.inventories;
-    default:
-      return state;
-    }
-  }
-};
-const inventoryStore = new InventoryStore(dispatcher);
-
-class ConfigStore extends ReduceStore {
-  getInitialState(){
-    return {};
-  }
-  reduce(state, action){
-    switch(action.type){
-    case "FETCH_CONFIG":
-      return action.config;
-    case "UPDATE_CONFIG":
-      return action.config;
-    default:
-      return state;
-    }
-  }
-};
-const configStore = new ConfigStore(dispatcher);
-
-class ErrorStore extends ReduceStore {
-  getInitialState(){
-    return null;
-  }
-  reduce(state, action){
-    switch(action.type){
-    case "CATCH_ERROR":
-      return action.error;
-    default:
-      return state;
-    }
-  }
-};
-const errorStore = new ErrorStore(dispatcher);
-
-// Action
-class PlaybookAction {
-  fetchAll(){
-    return new Promise((resolve, reject)=>{
-      request.get("/api/playbook").end((err, res)=>{
-        if(err){
-          dispatcher.dispatch({type: "CATCH_ERROR", error: res.body});
-          return reject(err);
-        }
-        dispatcher.dispatch({type: "FETCH_PLAYBOOKS", playbooks: res.body});
-        return resolve(res.body);
-      });
-    });
-  }
-  fetch(playbook){
-    return new Promise((resolve, reject)=>{
-      request.get(`/api/playbook/${playbook}`).end((err, res)=>{
-        if(err){
-          dispatcher.dispatch({type: "CATCH_ERROR", error: res.body});
-          return reject(err);
-        }
-        dispatcher.dispatch({type: "FETCH_PLAYBOOK", playbook: res.body});
-        return resolve(res.body);
-      });
-    });
-  }
-  play(playbook, query){
-    return new Promise((resolve, reject)=>{
-      request.post(`/api/playbook/${playbook.name}?${qs.stringify(query)}`).end((err, res)=>{
-        if(err){
-          dispatcher.dispatch({type: "CATCH_ERROR", error: res.body});
-          return reject(err);
-        }
-        dispatcher.dispatch({type: "PLAY_PLAYBOOK", playbook, result: res.body});
-        return resolve(res.body);
-      });
-    });
-  }
-}
-const playbookAction = new PlaybookAction();
-
-class InventoryAction {
-  fetchAll(){
-    return new Promise((resolve, reject)=>{
-      request.get("/api/inventory").end((err, res)=>{
-        if(err){
-          dispatcher.dispatch({type: "CATCH_ERROR", error: res.body});
-          return reject(err);
-        }
-        dispatcher.dispatch({type: "FETCH_INVENTORIES", inventories: res.body});
-        return resolve(res.body);
-      });
-    });
-  }
-}
-const inventoryAction = new InventoryAction();
-
-class ConfigAction {
-  fetch(){
-    return new Promise((resolve, reject)=>{
-      request.get("/api/config").end((err, res)=>{
-        if(err){
-          dispatcher.dispatch({type: "CATCH_ERROR", error: res.body});
-          return reject(err);
-        }
-        dispatcher.dispatch({type: "FETCH_CONFIG", config: res.body});
-        return resolve(res.body);
-      });
-    });
-  }
-  update(config){
-    return new Promise((resolve, reject)=>{
-      request.put("/api/config").send(config).end((err, res)=>{
-        if(err){
-          dispatcher.dispatch({type: "CATCH_ERROR", error: res.body});
-          return reject(err);
-        }
-        dispatcher.dispatch({type: "UPDATE_CONFIG", config: res.body});
-        return resolve(res.body);
-      });
-    });
-  }
-}
-const configAction = new ConfigAction();
+import PlaybookAction from "./actions/playbook-action";
+import InventoryAction from "./actions/inventory-action";
+import ConfigAction from "./actions/config-action";
+import ErrorAction from "./actions/error-action";
 
 /*********
  * Components
@@ -188,14 +31,14 @@ class Playbook extends Component {
       host: this.refs.host.value.trim(),
       startAt: this.refs.startAt.value.trim()
     };
-    playbookAction.play(playbook, q).then(()=>{
-      this.context.router.push(`/playbook/${playbook.name}/results`);
+    PlaybookAction.play(playbook, q).then(()=>{
+      this.context.router.push(`/playbooks/${playbook.name}/results`);
     });
   }
   render(){
     const {playbook, inventories} = this.props;
     return <tr>
-      <td><Link to={`/playbook/${playbook.name}`}>{playbook.name}</Link></td>
+      <td><Link to={`/playbooks/${playbook.name}`}>{playbook.name}</Link></td>
       <td>
       <select className="form-control" name="inventory" ref="inventory">
       {inventories.map((inventory, idx)=> <option key={idx} value={inventory.name}>{inventory.name}</option>)}
@@ -211,22 +54,21 @@ Playbook.contextTypes = {router: React.PropTypes.object.isRequired};
 
 class PlaybookDetail extends Component {
   componentWillMount(){
-    playbookAction.fetch(this.props.params.playbook);
+    PlaybookAction.fetch(this.props.params.playbook);
   }
   render(){
     const {error} = this.props.data;
     const playbookName = this.props.params.playbook;
-    const playbooks = this.props.data.playbooks.filter((playbook)=> playbook.name === playbookName);
-    if((typeof playbooks === "undefined") || (playbooks.length === 0)) return <div />;
-    const playbook = playbooks[0];
+    const playbook = this.props.data.playbooks.find((playbook)=> playbook.name === playbookName);
+    if(!playbook) return <div />;
 
     const content = (error) ?
             <div className="container"><textarea className="form-control" readOnly="readonly" rows={10} defaultValue={error.message} /></div>
             : <table className="table">
-            <thead><tr><th>Play</th><th>Task</th><th>Tags</th></tr></thead>
+            <thead><tr><th>Name</th><th>Host</th><th>Task</th><th>Tags</th></tr></thead>
             <tbody>
             {(playbook.plays || []).map((play, idx)=>{
-              return [<tr><td rowSpan={(play.tasks || []).length + 1}>{play.name}</td><td/><td>{play.tags.join(", ") || "-" }</td></tr>].concat(
+              return [<tr><td rowSpan={(play.tasks || []).length + 1}>{play.name}</td><td rowSpan={(play.tasks || []).length + 1}>{play.hosts.join(", ")}</td><td/><td>{play.tags.join(", ") || "-" }</td></tr>].concat(
                 (play.tasks || []).map((task, idy)=>{
                   return <tr><td>{task.name}</td><td>{task.tags.join(", ") || "-"}</td></tr>;
                 }));
@@ -285,20 +127,19 @@ class Playbooks extends Component {
 class Inventory extends Component {
   render(){
     const {inventory} = this.props;
-    return <tr><td><Link to={`/inventory/${inventory.name}`}>{inventory.name}</Link></td></tr>;
+    return <tr><td><Link to={`/inventories/${inventory.name}`}>{inventory.name}</Link></td></tr>;
   }
 }
 
 class InventoryDetail extends Component {
   componentWillMount(){
-    inventoryAction.fetchAll();
+    InventoryAction.fetchAll();
   }
   render(){
     const inventoryName = this.props.params.inventory;
     const {inventories} = this.props.data;
-    const cands = inventories.filter((i)=> i.name === inventoryName);
-    if(cands.length === 0) return <div></div>;
-    const inventory = cands[0];
+    const inventory = inventories.find((i)=> i.name === inventoryName);
+    if(!inventory) return <div />;
     return <div className="container">
       <h2>{inventoryName}</h2>
       {Object.keys(inventory.values).map((group, id)=>{
@@ -341,7 +182,7 @@ class Inventories extends Component {
 
 class Config extends Component {
   componentWillMount(){
-    configAction.fetch();
+    ConfigAction.fetch();
   }
   onSubmit(ev){
     ev.preventDefault();
@@ -349,7 +190,7 @@ class Config extends Component {
       ansiblePath:   this.refs.ansiblePath.value.trim(),
       inventoryPath: this.refs.inventoryPath.value.trim()
     };
-    configAction.update(config).then(()=>{
+    ConfigAction.update(config).then(()=>{
       return this.context.router.push("/");
     });
   }
@@ -386,32 +227,36 @@ class Main extends Component {
 class App extends Component {
   static getStores(){
     return [
-      errorStore,
-      playbookStore,
-      inventoryStore,
-      configStore
+      ErrorStore,
+      PlaybookStore,
+      InventoryStore,
+      ConfigStore
     ];
   }
   static calculateState(state){
     return {
-      error:       errorStore.getState(),
-      playbooks:   playbookStore.getState(),
-      inventories: inventoryStore.getState(),
-      config:      configStore.getState()
+      error:       ErrorStore.getState(),
+      playbooks:   PlaybookStore.getState(),
+      inventories: InventoryStore.getState(),
+      config:      ConfigStore.getState()
     };
   }
   componentWillMount(){
-    playbookAction.fetchAll();
-    inventoryAction.fetchAll();
-    configAction.fetch();
+    PlaybookAction.fetchAll();
+    InventoryAction.fetchAll();
+    ConfigAction.fetch();
+  }
+  closeError(){
+    ErrorAction.close();
   }
   render(){
-    console.log(this.state.error && this.state.error.error);
     const error = this.state.error ?
             <div className="container alert alert-danger" role="alert">
+            <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.closeError}>
+              <span aria-hidden="true">&times;</span>
+            </button>
             <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span className="sr-only">Error: </span> {this.state.error.error}</div>: null;
-    console.log(error);
+            <span className="sr-only">Error: </span> {this.state.error.message}</div>: null;
     return <div>
       <Header />
       {error}
@@ -423,9 +268,9 @@ class App extends Component {
 render(<Router history={hashHistory}>
        <Route path="/" component={Container.create(App)}>
          <IndexRoute component={Main} />
-         <Route path="playbook/:playbook" component={PlaybookDetail} />
-         <Route path="playbook/:playbook/results" component={PlaybookResult} />
-         <Route path="inventory/:inventory" component={InventoryDetail} />
+         <Route path="playbooks/:playbook" component={PlaybookDetail} />
+         <Route path="playbooks/:playbook/results" component={PlaybookResult} />
+         <Route path="inventories/:inventory" component={InventoryDetail} />
          <Route path="config" component={Config} />
        </Route>
        </Router>,

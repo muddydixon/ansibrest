@@ -2,7 +2,8 @@
 - name: Sample 2 use roles
   hosts: localhost
   roles:
-    - {role: sample2/1, tags: fuga}
+    - role: sample2/1
+      tags: fuga
     - sample2/2
   tags: hoge
 
