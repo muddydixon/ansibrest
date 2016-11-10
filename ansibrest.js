@@ -53,6 +53,8 @@ const getLogger = ()=>{
 const logger = program.logger = getLogger();
 const ansibrest = new Ansibrest(program);
 const server = http.createServer(ansibrest.app());
+ansibrest.socket(server);
+
 server.listen(program.port);
 server.on("listening", ()=>{
   logger.info(`ansibrest start on ${program.port}`);

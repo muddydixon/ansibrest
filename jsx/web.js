@@ -18,22 +18,23 @@ import InventoryAction from "./actions/inventory-action";
 import ConfigAction from "./actions/config-action";
 import ErrorAction from "./actions/error-action";
 
+const socket = io();
+socket.on("progress", ({playbook, message})=>{
+  PlaybookAction.progress(playbook, message);
+});
+
 /*********
  * Components
  */
 class Playbook extends Component {
   onPlay(ev){
-    ev.preventDefault();
     const {playbook} = this.props;
-
     const q = {
       inventory: this.refs.inventory.value.trim(),
       host: this.refs.host.value.trim(),
       startAt: this.refs.startAt.value.trim()
     };
-    PlaybookAction.play(playbook, q).then(()=>{
-      this.context.router.push(`/playbooks/${playbook.name}/results`);
-    });
+    PlaybookAction.play(playbook, q);
   }
   render(){
     const {playbook, inventories} = this.props;
@@ -46,7 +47,7 @@ class Playbook extends Component {
       </td>
       <td><input className="form-control" ref="host" /></td>
       <td><input className="form-control" ref="startAt" /></td>
-      <td><button className="btn btn-info" onClick={this.onPlay.bind(this)}>Play</button></td>
+      <td><Link to={`/playbooks/${playbook.name}/results`} className="btn btn-info" onClick={this.onPlay.bind(this)}>Play</Link></td>
       </tr>;
   }
 }
@@ -87,14 +88,12 @@ PlaybookDetail.contextTypes = {router: React.PropTypes.object.isRequired};
 class PlaybookResult extends Component {
   render(){
     const playbookName = this.props.params.playbook;
-    const playbooks = this.props.data.playbooks.filter((playbook)=> playbook.name === playbookName);
-    if((typeof playbooks === "undefined") || (playbooks.length === 0)) return this.context.router.push("/");
-    const playbook = playbooks[0];
-
+    const playbook = this.props.data.playbooks.find((playbook)=> playbook.name === playbookName);
+    if(!playbook) return this.context.router.push("/");
     return <div className="container">
       <h2>{playbook.name}</h2>
       <div className="row">
-      <pre><code>{playbook.results.shift().stdout}</code></pre>
+      <pre><code>{(playbook.results || []).join("\n")}</code></pre>
       </div>
     </div>;
   }

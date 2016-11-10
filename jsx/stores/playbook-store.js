@@ -20,9 +20,16 @@ class PlaybookStore extends ReduceStore {
       });
     case Const.PLAY_PLAYBOOK:
       return state.map((playbook)=>{
-        if(playbook !== action.playbook) return playbook;
+        if(playbook.name !== action.playbook.name) return playbook;
         if(!playbook.results) playbook.results = [];
-        playbook.results.push(action.result);
+        playbook.results = action.result.stdout.split("\n");
+        return playbook;
+      });
+    case Const.PROGRESS_PLAYBOOK:
+      return state.map((playbook)=>{
+        if(playbook.name !== action.playbook) return playbook;
+        if(!playbook.results) playbook.results = [];
+        playbook.results.push(action.message);
         return playbook;
       });
     default:

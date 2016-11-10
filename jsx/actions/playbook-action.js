@@ -40,6 +40,9 @@ class PlaybookAction {
       });
     });
   }
+  progress(playbook, msg){
+    dispatcher.dispatch({type: Const.PROGRESS_PLAYBOOK, playbook, message: msg});
+  }
 }
 const playbookAction = new PlaybookAction();
 
