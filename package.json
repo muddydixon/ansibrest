@@ -2,9 +2,9 @@
   "name": "ansibrest",
   "author": "muddydixon <muddydixon@gmail.com>",
   "readmetext": "README.md",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "RESTify Ansible playbook",
-  "main": "index.js",
+  "main": "ansibrest.js",
   "bin": {
     "ansibrest": "./ansibrest.js"
   },
