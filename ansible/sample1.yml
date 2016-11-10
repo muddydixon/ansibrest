@@ -1,6 +1,13 @@
 ---
 
-- name: Sample 1 tasks
+- name: Sample 1 tasks 1
   hosts: localhost
+  tags: sample
+  tasks:
+    - debug: var=inventory_hostname
+
+- name: Sample 1 tasks 2
+  hosts: localhost
+  tags: another,sample
   tasks:
     - debug: var=inventory_hostname

@@ -1,5 +1,3 @@
-"use strict";
-
 import React, {Component} from "react";
 import {Link} from "react-router";
 
@@ -7,7 +5,7 @@ export default class Header extends Component {
   render(){
     return (<header className="navbar navbar-static-top bs-docs-nav">
               <div className="container">
-                <a href="../" className="navbar-brand">Ansibrest</a>
+                <Link to="/" className="navbar-brand">Ansibrest</Link>
                 <nav className="collapse navbar-collapse">
                   <ul className="nav navbar-nav">
                     <li><Link to="/">List</Link></li>
