@@ -63,7 +63,11 @@ server.on("error", (err)=>{
   logger.error(err.stack);
   process.exit(-1);
 });
-server.on("uncaughtException", (err)=>{
+process.on("uncaughtException", (err)=>{
+  logger.error(err.stack);
+  process.exit(-1);
+});
+process.on("unhandledRejection", (err)=>{
   logger.error(err.stack);
   process.exit(-1);
 });
