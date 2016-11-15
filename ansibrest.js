@@ -4,7 +4,7 @@ process.title = "ansibrest";
 
 const http = require("http");
 const commander = require("commander");
-const Fs = require("fs");
+const Fs = require("fs-extra");
 const Path = require("path");
 const yaml = require("js-yaml");
 const log4js = require("log4js");
@@ -32,11 +32,12 @@ const getLogger = ()=>{
         type: "console"
       };
     }else{
-      const logDir = Path.join(__dirname, program.logDir);
+      const logDir = program.logDir.indexOf("/") === 0 ?
+              program.logDir : Path.join(__dirname, program.logDir);
       try{
         Fs.statSync(logDir);
       }catch(err){
-        Fs.mkdirSync(logDir);
+        Fs.mkdirsSync(logDir);
       }
       return {
         category: "ansibrest",
