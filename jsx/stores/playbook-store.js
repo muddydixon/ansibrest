@@ -18,17 +18,21 @@ class PlaybookStore extends ReduceStore {
         }
         return playbook;
       });
-    case Const.PLAY_PLAYBOOK:
+    case Const.PLAY_START_PLAYBOOK:
       return state.map((playbook)=>{
         if(playbook.name !== action.playbook.name) return playbook;
-        if(!playbook.results) playbook.results = [];
+        playbook.results = [];
+        return playbook;
+      });
+    case Const.PLAY_FINISH_PLAYBOOK:
+      return state.map((playbook)=>{
+        if(playbook.name !== action.playbook.name) return playbook;
         playbook.results = action.result.stdout.split("\n");
         return playbook;
       });
-    case Const.PROGRESS_PLAYBOOK:
+    case Const.PLAY_PROGRESS_PLAYBOOK:
       return state.map((playbook)=>{
         if(playbook.name !== action.playbook) return playbook;
-        if(!playbook.results) playbook.results = [];
         playbook.results.push(action.message);
         return playbook;
       });

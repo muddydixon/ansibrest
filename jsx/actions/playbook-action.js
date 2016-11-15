@@ -29,19 +29,20 @@ class PlaybookAction {
     });
   }
   play(playbook, query){
+    dispatcher.dispatch({type: Const.PLAY_START_PLAYBOOK, playbook});
     return new Promise((resolve, reject)=>{
       request.post(`${Const.basePath}/playbooks/${playbook.name}?${qs.stringify(query)}`).end((err, res)=>{
         if(err){
           dispatcher.dispatch({type: Const.CATCH_ERROR, error: res.body.error});
           return reject(err);
         }
-        dispatcher.dispatch({type: Const.PLAY_PLAYBOOK, playbook, result: res.body});
+        dispatcher.dispatch({type: Const.PLAY_FINISH_PLAYBOOK, playbook, result: res.body});
         return resolve(res.body);
       });
     });
   }
   progress(playbook, msg){
-    dispatcher.dispatch({type: Const.PROGRESS_PLAYBOOK, playbook, message: msg});
+    dispatcher.dispatch({type: Const.PLAY_PROGRESS_PLAYBOOK, playbook, message: msg});
   }
 }
 const playbookAction = new PlaybookAction();

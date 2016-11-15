@@ -22,6 +22,16 @@ Start REST Server to execute local ansible.
     --inventory-path <INVENTORY_PATH>  INVENTORY_PATH
 ```
 
+## Dockerize
+
+```
+docker run -d -p 2400:2400 -v $ANSIBLE_PATH:/opt/ansible muddydixon/ansibrest
+docker run -d -p 2400:2400 -v $YOURANSIBRRESTFILE:/opt/ansibrest/.ansibrest \
+                           -v $ANSIBLE_PATH:/opt/ansible \
+                           muddydixon/ansibrest
+```
+
+
 ## Contribute
 
 ```
