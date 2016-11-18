@@ -8,7 +8,7 @@ ARG https_proxy=${https_proxy}
 ENV http_proxy=${http_proxy}
 ENV https_proxy=${https_proxy}
 
-RUN apt-get update && apt-get install -y python-setuptools python-dev
+RUN apt-get update && apt-get install -y python-setuptools python-dev expect
 RUN easy_install pip
 RUN pip install ansible
 RUN npm install ansibrest -g
