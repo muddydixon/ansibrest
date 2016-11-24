@@ -32,7 +32,8 @@ class Playbook extends Component {
     const q = {
       inventory: this.refs.inventory.value.trim(),
       host: this.refs.host.value.trim(),
-      startAt: this.refs.startAt.value.trim()
+      startAt: this.refs.startAt.value.trim(),
+      extraVars: this.refs.extraVars.value.trim()
     };
     PlaybookAction.play(playbook, q);
   }
@@ -47,6 +48,7 @@ class Playbook extends Component {
       </td>
       <td><input className="form-control" ref="host" /></td>
       <td><input className="form-control" ref="startAt" /></td>
+      <td><input className="form-control" ref="extraVars"/></td>
       <td><Link to={`/playbooks/${playbook.name}/results`} className="btn btn-info" onClick={this.onPlay.bind(this)}>Play</Link></td>
       </tr>;
   }
@@ -108,12 +110,13 @@ class Playbooks extends Component {
       <colgroup>
         <col width="auto"></col>
         <col width="15%"></col>
+        <col width="15%"></col>
         <col width="18%"></col>
-        <col width="18%"></col>
+        <col width="20%"></col>
         <col width="5%"></col>
       </colgroup>
       <thead>
-        <tr><th>Playbook</th><th>Inventory</th><th>Host</th><th>StartAt</th><th /></tr>
+      <tr><th>Playbook</th><th>Inventory</th><th>Host</th><th>StartAt</th><th>ExtraVars</th><th /></tr>
       </thead>
       <tbody>
         {(playbooks || []).map((playbook, id)=> <Playbook key={id} playbook={playbook} inventories={inventories}/> )}

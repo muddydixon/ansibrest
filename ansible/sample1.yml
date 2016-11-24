@@ -11,3 +11,8 @@
   tags: another,sample
   tasks:
     - debug: var=inventory_hostname
+
+- name: Show Extra Vars
+  hosts: localhost
+  tasks:
+    - debug: msg="version {{version | default('no_version')}}"
