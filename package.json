@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "node ansibrest.js",
-    "server:watch": "node-dev lib/server.js",
+    "server:watch": "DEBUG=${DEBUG},${DEBUG}:* node-dev ansibrest.js",
     "jsx:build": "browserify -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] jsx/web.js",
     "jsx:watch": "watchify -d -v -o public/js/web.js -t [ babelify --presets [ es2015 react ] ] jsx/web.js"
   },
