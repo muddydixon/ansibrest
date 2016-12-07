@@ -22,6 +22,9 @@ const socket = io();
 socket.on("progress", ({playbook, message})=>{
   PlaybookAction.progress(playbook, message);
 });
+socket.on("connect_error", (err)=>{
+  ErrorAction.catch(err);
+});
 
 /*********
  * Components
